@@ -2,28 +2,22 @@ package provider
 
 import (
 	"context"
-	"time"
+	"encoding/json"
+	"os"
 
 	"flight-search-aggregation/models"
+	"flight-search-aggregation/utils"
 )
 
 type LionAirProvider struct{}
 
-func (lionAir *LionAirProvider) BaseUrl() string {
-	return "http://localhost:8080/lionair"
-}
-
 func (lionAir *LionAirProvider) GetFlights(ctx context.Context, req SearchRequest) ([]models.Flight, error) {
-	reqHTTP, _ := http.NewRequestWithContext(ctx, "GET", lionAir.BaseUrl()+"/search", nil)
-    response, err := http.DefaultClient.Do(reqHTTP)
-    if err != nil {
-        return nil, err
-    }
-    defer response.Body.Close()
+	utils.RandomDelay(100, 200)
 
+	data, _ := os.ReadFile("mock/lion_air_search_response.json")
+	
 	var lionAirResponse models.LionAirResponse
-
-    json.NewDecoder(response.Body).Decode(&lionAirResponse)
+	json.Unmarshal(data, &lionAirResponse)
 
 	var results []models.Flight
     for _, data := range lionAirResponse.Data.AvailableFlights {

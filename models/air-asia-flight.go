@@ -1,7 +1,9 @@
 package models
 
-import "time"
-import "flight-search-aggregation/utils"
+import (
+	"time"
+	"flight-search-aggregation/utils"
+)
 
 type AirAsiaResponse struct {
 	Status string `json:"status"`
@@ -59,7 +61,7 @@ func (airAsia AirAsiaFlight) ToFlight() Flight {
 		},
 		Duration: DurationInfo{
 			TotalMinutes: durationMinutes,
-			Formatted:    utils.formatDuration(durationMinutes),
+			Formatted:    utils.FormatDuration(durationMinutes),
 		},
 		Stops: stops,
 		Price: PriceInfo{
@@ -71,7 +73,7 @@ func (airAsia AirAsiaFlight) ToFlight() Flight {
 		Baggage: BaggageInfo{
 			CarryOn: "Cabin baggage only",
 			Checked: "checked bags additional fee",
-		}
+		},
 		Amenities: []string{},
 	}
 }

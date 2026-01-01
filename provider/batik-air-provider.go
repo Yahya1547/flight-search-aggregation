@@ -2,28 +2,22 @@ package provider
 
 import (
 	"context"
-	"time"
+    "encoding/json"
+    "os"
 
 	"flight-search-aggregation/models"
+    "flight-search-aggregation/utils"
 )
 
 type BatikAirProvider struct{}
 
-func (batikAir *BatikAirProvider) BaseUrl() string {
-	return "http://localhost:8080/batikair"
-}
-
 func (batikAir *BatikAirProvider) GetFlights(ctx context.Context, req SearchRequest) ([]models.Flight, error) {
-	reqHTTP, _ := http.NewRequestWithContext(ctx, "GET", batikAir.BaseUrl()+"/search", nil)
-    response, err := http.DefaultClient.Do(reqHTTP)
-    if err != nil {
-        return nil, err
-    }
-    defer response.Body.Close()
+	utils.RandomDelay(200, 400)
+
+	data, _ := os.ReadFile("mock/batik_air_search_response.json")
 
 	var batikAirResponse models.BatikAirResponse
-
-    json.NewDecoder(response.Body).Decode(&batikAirResponse)
+	json.Unmarshal(data, &batikAirResponse)
 
 	var results []models.Flight
     for _, data := range batikAirResponse.Results {

@@ -2,6 +2,35 @@ package models
 
 import "time"
 
+type FlightResponse struct {
+	SearchCriteria FlightSearchCriteria `json:"search_criteria"`
+	Flights        []Flight            `json:"flights"`
+	Metadata       FlightMetadata     `json:"metadata"`
+}
+
+type FlightSearchCriteria struct {
+	Origin        string `json:"origin"`
+	Destination   string `json:"destination"`
+	DepartureDate string `json:"departure_date"`
+	ReturnDate    string `json:"return_date,omitempty"`
+	Passengers    int    `json:"passengers"`
+	CabinClass    string `json:"cabin_class"`
+}
+
+type FlightMetadata struct {
+	TotalResults 	  int  `json:"total_results"`
+	ProvidersQueried  int  `json:"providers_queried"`
+	ProvidersSucceeded int `json:"providers_succeeded"`
+	ProvidersFailed    int `json:"providers_failed"`
+	SearchTimeMs       int `json:"search_time_ms"`
+	CacheHit           bool `json:"cache_hit"`
+}
+
+type FlightAggregatedData struct {
+	Flights []Flight `json:"flights"`
+	Metadata FlightMetadata `json:"metadata"`
+}
+
 type Flight struct {
 	Id       string    `json:"id"`
 	Provider string    `json:"provider"`
@@ -44,22 +73,4 @@ type PriceInfo struct {
 type BaggageInfo struct {
 	CarryOn string `json:"carry_on"`
 	Checked string `json:"checked"`
-}
-
-type FlightSearchCriteria struct {
-	Origin        string `json:"origin"`
-	Destination   string `json:"destination"`
-	DepartureDate string `json:"departure_date"`
-	ReturnDate    string `json:"return_date,omitempty"`
-	Passengers    int    `json:"passengers"`
-	CabinClass    string `json:"cabin_class"`
-}
-
-type FlightMetadata struct {
-	TotalResults 	  int  `json:"total_results"`
-	ProvidersQueried  int  `json:"providers_queried"`
-	ProvidersSucceeded int `json:"providers_succeeded"`
-	ProvidersFailed    int `json:"providers_failed"`
-	SearchTimeMs       int `json:"search_time_ms"`
-	CacheHit           bool `json:"cache_hit"`
 }

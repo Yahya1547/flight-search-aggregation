@@ -2,28 +2,30 @@ package provider
 
 import (
 	"context"
-	"time"
+    "encoding/json"
+    "math/rand"
+    "os"
+    "errors"
 
 	"flight-search-aggregation/models"
+    "flight-search-aggregation/utils"
 )
 
 type AirAsiaProvider struct{}
 
-func (airAsia *AirAsiaProvider) BaseUrl() string {
-	return "http://localhost:8080/airasia"
-}
-
 func (airAsia *AirAsiaProvider) GetFlights(ctx context.Context, req SearchRequest) ([]models.Flight, error) {
-	reqHTTP, _ := http.NewRequestWithContext(ctx, "GET", airAsia.BaseUrl()+"/search", nil)
-    response, err := http.DefaultClient.Do(reqHTTP)
-    if err != nil {
-        return nil, err
-    }
-    defer response.Body.Close()
+	utils.RandomDelay(50, 150)
+
+	// 90% success rate
+	if rand.Float64() > 0.9 {
+        return nil, errors.New("AirAsia service unavailable")
+		// return nil, http.Error("AirAsia service unavailable")
+	}
+
+	data, _ := os.ReadFile("mock/airasia_search_response.json")
 
 	var airAsiaResponse models.AirAsiaResponse
-
-    json.NewDecoder(response.Body).Decode(&airAsiaResponse)
+	json.Unmarshal(data, &airAsiaResponse)
 
 	var results []models.Flight
     for _, data := range airAsiaResponse.Flights {

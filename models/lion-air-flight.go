@@ -1,13 +1,17 @@
 package models
 
-import "time"
-import "flight-search-aggregation/utils"
+import (
+	"time"
+	"flight-search-aggregation/utils"
+)
 
 type LionAirResponse struct {
 	Success bool `json:"success"`
-	Data []struct {
-		AvailableFlights []LionAirFlight `json:"available_flights"`
-	} `json:"data"`
+	Data LionAirDataResponse `json:"data"`
+}
+
+type LionAirDataResponse struct {
+	AvailableFlights []LionAirFlight `json:"available_flights"`
 }
 
 type LionAirFlight struct {
@@ -61,8 +65,13 @@ type ServiceInfo struct {
 }
 
 type BaggageAllowanceInfo struct {
-	Carry string `json:"cabin"`
+	Cabin string `json:"cabin"`
 	Hold  string  `json:"hold"`
+}
+
+type LayoverInfo struct {
+	Airport string `json:"airport"`
+	DurationMinutes    int `json:"duration_minutes"`
 }
 
 func (lionAir LionAirFlight) ToFlight() Flight {
@@ -80,6 +89,17 @@ func (lionAir LionAirFlight) ToFlight() Flight {
 	if (lionAir.Services.MealsIncluded) {
 		amenities = append(amenities, "Meals")
 	}
+
+	var layoverTime int
+	if (lionAir.IsDirect) {
+		layoverTime = 0
+	} else {
+		for _, layover := range lionAir.Layovers {
+			layoverTime += layover.DurationMinutes
+		}
+	}
+
+	flightTime := lionAir.FlightTime + layoverTime
 
 	return Flight {
 		Id:       lionAir.Id + "_LionAir",
@@ -102,8 +122,8 @@ func (lionAir LionAirFlight) ToFlight() Flight {
 			Timestamp: lionAir.Schedule.Arrival.Unix(),
 		},
 		Duration: DurationInfo{
-			TotalMinutes: lionAir.FlightTime,
-			Formatted: utils.formatDuration(lionAir.FlightTime),
+			TotalMinutes: flightTime,
+			Formatted: utils.FormatDuration(flightTime),
 		},
 		Stops: stopCount,
 		Aircraft: lionAir.PlaneType,

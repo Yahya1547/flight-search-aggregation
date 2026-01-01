@@ -1,7 +1,11 @@
 package models
 
-import "time"
-import "flight-search-aggregation/utils"
+import (
+	"time"
+	"fmt"
+
+	"flight-search-aggregation/utils"
+)
 
 type BatikAirResponse struct {
 	Code int   `json:"code"`

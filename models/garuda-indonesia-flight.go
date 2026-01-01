@@ -1,7 +1,12 @@
 package models
 
-import "time"
-import "flight-search-aggregation/utils"
+import (
+	"time"
+	"fmt"
+	"strconv"
+	
+	"flight-search-aggregation/utils"
+)
 
 type GarudaIndonesiaResponse struct {
 	Status string `json:"status"`
@@ -17,7 +22,7 @@ type GarudaIndonesiaFlight struct {
 	DurationMin	int       `json:"duration_minutes"`
 	Stops          int       `json:"stops"`
 	Aircraft       string    `json:"aircraft"`
-	Price          PriceInfo `json:"price"`
+	Price          GarudaPriceInfo `json:"price"`
 	AvailableSeats int       `json:"available_seats"`
 	FareClass      string    `json:"fare_class"`
 	Baggage        GarudaBaggageInfo `json:"baggage"`
@@ -32,7 +37,7 @@ type GarudaFlightPointInfo struct {
 	Terminal string    `json:"terminal"`
 }
 
-type PriceInfo struct {
+type GarudaPriceInfo struct {
 	Amount   float64 `json:"amount"`
 	Currency string  `json:"currency"`
 }
@@ -79,13 +84,13 @@ func (garudaIndonesia GarudaIndonesiaFlight) ToFlight() Flight {
 		},
 		Duration: DurationInfo{
 			TotalMinutes: garudaIndonesia.DurationMin,
-			Formatted: utils.formatDuration(garudaIndonesia.DurationMin),
+			Formatted: utils.FormatDuration(garudaIndonesia.DurationMin),
 		},
 		Stops:    garudaIndonesia.Stops,
 		Aircraft: garudaIndonesia.Aircraft,
 		Baggage: BaggageInfo{
-			CarryOn: garudaIndonesia.Baggage.CarryOn,
-			Checked: garudaIndonesia.Baggage.Checked,
+			CarryOn: strconv.Itoa(garudaIndonesia.Baggage.CarryOn),
+			Checked: strconv.Itoa(garudaIndonesia.Baggage.Checked),
 		},
         Price: PriceInfo{
             Amount:   garudaIndonesia.Price.Amount,

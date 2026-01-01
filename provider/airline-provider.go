@@ -1,17 +1,19 @@
 package provider
 
 import (
+	"time"
 	"context"
 	"flight-search-aggregation/models"
 )
 
 type SearchRequest struct {
-	Origin      string
-	Destination string
-	DepartureDate time.Time
+	Origin      string `json:"origin"`
+	Destination string `json:"destination"`
+	DepartureDate time.Time `json:"departureDate"`
+	Passengers  int `json:"passengers"`
+	CabinClass string `json:"cabinClass"`
 }
 
 type AirlineProvider interface {
-	BaseUrl() string
 	GetFlights(ctx context.Context, req SearchRequest) ([]models.Flight, error)
 }

@@ -2,30 +2,25 @@ package provider
 
 import (
 	"context"
-	"time"
+	"encoding/json"
+	"os"
 
 	"flight-search-aggregation/models"
+	"flight-search-aggregation/utils"
 )
 
 type GarudaIndonesiaProvider struct{
 	
 }
 
-func (garudaIndonesia *GarudaIndonesiaProvider) BaseUrl() string {
-	return "http://localhost:8080/garudaindonesia"
-}
-
 func (garudaIndonesia *GarudaIndonesiaProvider) GetFlights(ctx context.Context, req SearchRequest) ([]models.Flight, error) {
-	reqHTTP, _ := http.NewRequestWithContext(ctx, "GET", garudaIndonesia.BaseUrl()+"/search", nil)
-    response, err := http.DefaultClient.Do(reqHTTP)
-    if err != nil {
-        return nil, err
-    }
-    defer response.Body.Close()
+	utils.RandomDelay(50, 100)
+
+	data, _ := os.ReadFile("mock/garuda_indonesia_search_response.json")
 
 	var garudaIndonesiaResponse models.GarudaIndonesiaResponse
+	json.Unmarshal(data, &garudaIndonesiaResponse)
 
-    json.NewDecoder(response.Body).Decode(&garudaIndonesiaResponse)
 
 	var results []models.Flight
     for _, garudaFlight := range garudaIndonesiaResponse.Flights {
