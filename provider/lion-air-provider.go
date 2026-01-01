@@ -15,7 +15,7 @@ func (lionAir *LionAirProvider) GetFlights(ctx context.Context, req SearchReques
 	utils.RandomDelay(100, 200)
 
 	data, _ := os.ReadFile("mock/lion_air_search_response.json")
-	
+
 	var lionAirResponse models.LionAirResponse
 	json.Unmarshal(data, &lionAirResponse)
 

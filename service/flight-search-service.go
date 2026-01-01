@@ -17,9 +17,9 @@ func FilterByPrice(flights []models.Flight, max float64, min float64) []models.F
 }
 
 func FilterByDuration(flights []models.Flight, max int, min int) []models.Flight {
-	var res []models.Flight
+	res := []models.Flight{}
 	for _, flight := range flights {
-		if flight.Duration.TotalMinutes <= max && flight.Duration.TotalMinutes >= min {
+		if flight.Duration.TotalMinutes / 60 <= max && flight.Duration.TotalMinutes / 60 >= min {
 			res = append(res, flight)
 		}
 	}

@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 	"strings"
+	"fmt"
 
 	"flight-search-aggregation/aggregator"
 	"flight-search-aggregation/provider"
@@ -60,16 +61,18 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 	}
 	providersList := service.GetAirlineProvidersFilterByAirlines(airlineFilterList)
 	aggregatedFlight, _ := aggregator.Aggregate(ctx, req, providersList)
-
 	flights := aggregatedFlight.Flights
 
 	if maxPriceStr != "" && minPriceStr != "" {
+		fmt.Println("Filtering by price:", maxPriceStr, minPriceStr)
 		maxPrice, _ := strconv.ParseFloat(maxPriceStr, 64)
 		minPrice, _ := strconv.ParseFloat(minPriceStr, 64)
 		flights = service.FilterByPrice(flights, maxPrice, minPrice)
 	}
 
+
 	if maxDurationStr != "" && minDurationStr != "" {
+		fmt.Println("Filtering by duration:", maxDurationStr, minDurationStr)
 		maxDuration, _ := strconv.Atoi(maxDurationStr)
 		minDuration, _ := strconv.Atoi(minDurationStr)
 		flights = service.FilterByDuration(flights, maxDuration, minDuration)
@@ -92,6 +95,8 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 		Flights: flights,
 		Metadata: aggregatedFlight.Metadata,
 	}
+
+	flightsResponse.Metadata.TotalResults = len(flights)
 
 	response.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(response).Encode(flightsResponse)

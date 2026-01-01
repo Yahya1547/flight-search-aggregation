@@ -19,8 +19,8 @@ type BatikAirFlight struct {
 	AirlineIATA       string    `json:"airlineIATA"`
 	Origin            string    `json:"origin"`
 	Destination       string    `json:"destination"`
-	DepartureDateTime time.Time `json:"departureDateTime"`
-	ArrivalDateTime   time.Time `json:"arrivalDateTime"`
+	DepartureDateTime string `json:"departureDateTime"`
+	ArrivalDateTime   string `json:"arrivalDateTime"`
 	TravelTime        string    `json:"travelTime"`
 	NumberOfStops     int       `json:"numberOfStops"`
 	Fare              BatikAirFareInfo `json:"fare"`
@@ -46,7 +46,8 @@ type BatikAirConnectionInfo struct {
 
 func (batikAir BatikAirFlight) ToFlight() Flight {
 	durationMinutes := utils.ParseDurationToMinutes(batikAir.TravelTime)
-
+	arrivalTime, _ := time.Parse(time.RFC3339, batikAir.ArrivalDateTime)
+	departureTime, _ := time.Parse(time.RFC3339, batikAir.DepartureDateTime)
 	return Flight{
 		Id:       batikAir.FlightNumber + "_BatikAir",
 		Provider: "Batik Air",
@@ -58,14 +59,14 @@ func (batikAir BatikAirFlight) ToFlight() Flight {
 		Departure: FlightPointInfo{
 			Airport:  batikAir.Origin,
 			City:     "",
-			Datetime: batikAir.DepartureDateTime,
-			Timestamp: batikAir.DepartureDateTime.Unix(),
+			Datetime: departureTime,
+			Timestamp: departureTime.Unix(),
 		},
 		Arrival: FlightPointInfo{
 			Airport:  batikAir.Destination,
 			City:     "",
-			Datetime: batikAir.ArrivalDateTime,
-			Timestamp: batikAir.ArrivalDateTime.Unix(),
+			Datetime: arrivalTime,
+			Timestamp: arrivalTime.Unix(),
 		},
 		Duration: DurationInfo{
 			TotalMinutes: durationMinutes,

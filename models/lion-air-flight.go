@@ -26,7 +26,7 @@ type LionAirFlight struct {
 	PlaneType string    `json:"plane_type"`
 	Services  ServiceInfo `json:"services"`
 	Layovers  []LayoverInfo `json:"layovers,omitempty"`
-	StopCount int       `json:"stop_count,omitempty"`
+	StopCount int       `json:"stop_count"`
 }
 
 type CarrierInfo struct {
@@ -46,9 +46,9 @@ type AirportInfo struct {
 }
 
 type ScheduleInfo struct {
-	Departure          time.Time `json:"departure"`
+	Departure          string `json:"departure"`
 	DepartureTimezone  string    `json:"departure_timezone"`
-	Arrival            time.Time `json:"arrival"`
+	Arrival            string `json:"arrival"`
 	ArrivalTimezone    string    `json:"arrival_timezone"`
 }
 
@@ -100,7 +100,10 @@ func (lionAir LionAirFlight) ToFlight() Flight {
 	}
 
 	flightTime := lionAir.FlightTime + layoverTime
-
+	
+	departureTime, _ := time.Parse(time.RFC3339, lionAir.Schedule.Departure + "Z07:00")
+	arrivalTime, _ := time.Parse(time.RFC3339, lionAir.Schedule.Arrival + "Z07:00")
+	
 	return Flight {
 		Id:       lionAir.Id + "_LionAir",
 		Provider: "Lion Air",
@@ -112,14 +115,14 @@ func (lionAir LionAirFlight) ToFlight() Flight {
 		Departure: FlightPointInfo{
 			Airport:  lionAir.Route.From.Code,
 			City:     lionAir.Route.From.City,
-			Datetime: lionAir.Schedule.Departure,
-			Timestamp: lionAir.Schedule.Departure.Unix(),
+			Datetime: departureTime,
+			Timestamp: departureTime.Unix(),
 		},
 		Arrival: FlightPointInfo{
 			Airport:  lionAir.Route.To.Code,
 			City:     lionAir.Route.To.City,
-			Datetime: lionAir.Schedule.Arrival,
-			Timestamp: lionAir.Schedule.Arrival.Unix(),
+			Datetime: arrivalTime,
+			Timestamp: arrivalTime.Unix(),
 		},
 		Duration: DurationInfo{
 			TotalMinutes: flightTime,
