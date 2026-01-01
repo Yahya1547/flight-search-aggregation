@@ -8,10 +8,10 @@ import (
 type SearchRequest struct {
 	Origin      string
 	Destination string
+	DepartureDate time.Time
 }
 
 type AirlineProvider interface {
 	BaseUrl() string
-	Name() string
 	GetFlights(ctx context.Context, req SearchRequest) ([]models.Flight, error)
 }

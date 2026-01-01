@@ -9,12 +9,8 @@ import (
 
 type LionAirProvider struct{}
 
-func (lionAir *LionAirProvider) Name() string {
-	return "LionAirProvider"
-}
-
 func (lionAir *LionAirProvider) BaseUrl() string {
-	return "https://api.lionair.com"
+	return "http://localhost:8080/lionair"
 }
 
 func (lionAir *LionAirProvider) GetFlights(ctx context.Context, req SearchRequest) ([]models.Flight, error) {
@@ -25,12 +21,7 @@ func (lionAir *LionAirProvider) GetFlights(ctx context.Context, req SearchReques
     }
     defer response.Body.Close()
 
-	var lionAirResponse struct {
-        Success bool `json:"success"`
-        Data []struct {
-			AvailableFlights []models.LionAirFlight `json:"available_flights"`
-		} `json:"data"`
-    }
+	var lionAirResponse models.LionAirResponse
 
     json.NewDecoder(response.Body).Decode(&lionAirResponse)
 

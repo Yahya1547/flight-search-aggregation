@@ -11,12 +11,8 @@ type GarudaIndonesiaProvider struct{
 	
 }
 
-func (garudaIndonesia *GarudaIndonesiaProvider) Name() string {
-	return "Garuda Indonesia Provider"
-}
-
 func (garudaIndonesia *GarudaIndonesiaProvider) BaseUrl() string {
-	return "https://api.garudaindonesia.com"
+	return "http://localhost:8080/garudaindonesia"
 }
 
 func (garudaIndonesia *GarudaIndonesiaProvider) GetFlights(ctx context.Context, req SearchRequest) ([]models.Flight, error) {
@@ -27,10 +23,7 @@ func (garudaIndonesia *GarudaIndonesiaProvider) GetFlights(ctx context.Context, 
     }
     defer response.Body.Close()
 
-	var garudaIndonesiaResponse struct {
-        Status string `json:"status"`
-        Flights []models.GarudaIndonesiaFlight `json:"flights"`
-    }
+	var garudaIndonesiaResponse models.GarudaIndonesiaResponse
 
     json.NewDecoder(response.Body).Decode(&garudaIndonesiaResponse)
 

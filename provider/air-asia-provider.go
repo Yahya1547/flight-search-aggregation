@@ -9,12 +9,8 @@ import (
 
 type AirAsiaProvider struct{}
 
-func (airAsia *AirAsiaProvider) Name() string {
-	return "AirAsiaProvider"
-}
-
 func (airAsia *AirAsiaProvider) BaseUrl() string {
-	return "https://api.AirAsia.com"
+	return "http://localhost:8080/airasia"
 }
 
 func (airAsia *AirAsiaProvider) GetFlights(ctx context.Context, req SearchRequest) ([]models.Flight, error) {
@@ -25,10 +21,7 @@ func (airAsia *AirAsiaProvider) GetFlights(ctx context.Context, req SearchReques
     }
     defer response.Body.Close()
 
-	var airAsiaResponse struct {
-        Status string `json:"status"`
-        Flights []models.AirAsiaFlight `json:"flights"`
-    }
+	var airAsiaResponse models.AirAsiaResponse
 
     json.NewDecoder(response.Body).Decode(&airAsiaResponse)
 

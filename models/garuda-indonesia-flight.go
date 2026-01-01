@@ -3,6 +3,11 @@ package models
 import "time"
 import "flight-search-aggregation/utils"
 
+type GarudaIndonesiaResponse struct {
+	Status string `json:"status"`
+	Flights []GarudaIndonesiaFlight `json:"flights"`
+}
+
 type GarudaIndonesiaFlight struct {
 	FlightId       string    `json:"flight_id"`
 	Airline        string    `json:"airline"`

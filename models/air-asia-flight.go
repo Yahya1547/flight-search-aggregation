@@ -3,6 +3,11 @@ package models
 import "time"
 import "flight-search-aggregation/utils"
 
+type AirAsiaResponse struct {
+	Status string `json:"status"`
+	Flights []AirAsiaFlight `json:"flights"`
+}
+
 type AirAsiaFlight struct {
 	FlightCode       string    `json:"flight_code"`
 	Airline         string    `json:"airline"`
@@ -71,65 +76,3 @@ func (airAsia AirAsiaFlight) ToFlight() Flight {
 	}
 }
 
-{
-      "flight_code": "QZ520",
-      "airline": "AirAsia",
-      "from_airport": "CGK",
-      "to_airport": "DPS",
-      "depart_time": "2025-12-15T04:45:00+07:00",
-      "arrive_time": "2025-12-15T07:25:00+08:00",
-      "duration_hours": 1.67,
-      "direct_flight": true,
-      "price_idr": 650000,
-      "seats": 67,
-      "cabin_class": "economy",
-      "baggage_note": "Cabin baggage only, checked bags additional fee"
-    },
-    {
-      "flight_code": "QZ524",
-      "airline": "AirAsia",
-      "from_airport": "CGK",
-      "to_airport": "DPS",
-      "depart_time": "2025-12-15T10:00:00+07:00",
-      "arrive_time": "2025-12-15T12:45:00+08:00",
-      "duration_hours": 1.75,
-      "direct_flight": true,
-      "price_idr": 720000,
-      "seats": 54,
-      "cabin_class": "economy",
-      "baggage_note": "Cabin baggage only, checked bags additional fee"
-    },
-    {
-      "flight_code": "QZ532",
-      "airline": "AirAsia",
-      "from_airport": "CGK",
-      "to_airport": "DPS",
-      "depart_time": "2025-12-15T19:30:00+07:00",
-      "arrive_time": "2025-12-15T22:10:00+08:00",
-      "duration_hours": 1.67,
-      "direct_flight": true,
-      "price_idr": 595000,
-      "seats": 72,
-      "cabin_class": "economy",
-      "baggage_note": "Cabin baggage only, checked bags additional fee"
-    },
-    {
-      "flight_code": "QZ7250",
-      "airline": "AirAsia",
-      "from_airport": "CGK",
-      "to_airport": "DPS",
-      "depart_time": "2025-12-15T15:15:00+07:00",
-      "arrive_time": "2025-12-15T20:35:00+08:00",
-      "duration_hours": 4.33,
-      "direct_flight": false,
-      "stops": [
-        {
-          "airport": "SOC",
-          "wait_time_minutes": 95
-        }
-      ],
-      "price_idr": 485000,
-      "seats": 88,
-      "cabin_class": "economy",
-      "baggage_note": "Cabin baggage only, checked bags additional fee"
-    }

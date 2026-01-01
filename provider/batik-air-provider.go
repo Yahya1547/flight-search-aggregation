@@ -9,12 +9,8 @@ import (
 
 type BatikAirProvider struct{}
 
-func (batikAir *BatikAirProvider) Name() string {
-	return "BatikAirProvider"
-}
-
 func (batikAir *BatikAirProvider) BaseUrl() string {
-	return "https://api.BatikAir.com"
+	return "http://localhost:8080/batikair"
 }
 
 func (batikAir *BatikAirProvider) GetFlights(ctx context.Context, req SearchRequest) ([]models.Flight, error) {
@@ -25,11 +21,7 @@ func (batikAir *BatikAirProvider) GetFlights(ctx context.Context, req SearchRequ
     }
     defer response.Body.Close()
 
-	var batikAirResponse struct {
-        Code int   `json:"code"`
-        Message string `json:"message"`
-        Results []models.BatikAirFlight `json:"results"`
-    }
+	var batikAirResponse models.BatikAirResponse
 
     json.NewDecoder(response.Body).Decode(&batikAirResponse)
 

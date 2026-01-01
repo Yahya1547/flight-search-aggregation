@@ -3,6 +3,13 @@ package models
 import "time"
 import "flight-search-aggregation/utils"
 
+type LionAirResponse struct {
+	Success bool `json:"success"`
+	Data []struct {
+		AvailableFlights []LionAirFlight `json:"available_flights"`
+	} `json:"data"`
+}
+
 type LionAirFlight struct {
 	Id       string    `json:"id"`
 	Carrier  CarrierInfo `json:"carrier"`
