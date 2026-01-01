@@ -28,6 +28,8 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 	providersList := []provider.AirlineProvider{
 		&provider.LionAirProvider{},
 		&provider.GarudaIndonesiaProvider{},
+		&provider.AirAsiaProvider{},
+		&provider.BatikAirProvider{},
 	}
 
 	flights, _ := aggregator.Aggregate(ctx, req, providersList)
