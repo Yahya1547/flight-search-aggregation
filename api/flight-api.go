@@ -26,6 +26,8 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 	minPriceStr := request.URL.Query().Get("min_price")
 	maxDurationStr := request.URL.Query().Get("max_duration")
 	minDurationStr := request.URL.Query().Get("min_duration")
+	sortByStr := request.URL.Query().Get("sort_by")
+	sortDirectionStr := request.URL.Query().Get("sort_direction")
 
 	numberOfStopFilter := []int{}
 	if (numberOfStops != "") { 
@@ -74,7 +76,21 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 		flights = service.FilterByNumberOfStops(flights, numberOfStopFilter)
 	}
 
-	service.SortByPrice(flights, true)
+	sortBy := strings.ToLower(sortByStr)
+	if sortBy == "" {
+		sortBy = "price"
+	}
+	sortDirection := strings.ToLower(sortDirectionStr)
+	if sortDirection == "" {
+		sortDirection = "asc"
+	}
+
+	switch sortBy {
+		case "price":
+			service.SortByPrice(flights, sortDirection == "asc")
+		case "duration":
+			service.SortByDuration(flights, sortDirection == "asc")
+	}
 
 	flightsResponse := models.FlightResponse {
 		SearchCriteria: models.FlightSearchCriteria {
