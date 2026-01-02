@@ -96,6 +96,7 @@ func (garudaIndonesia GarudaIndonesiaFlight) ToFlight() Flight {
 		},
         Price: PriceInfo{
             Amount:   garudaIndonesia.Price.Amount,
+			FormattedAmount: utils.FormatIDR(garudaIndonesia.Price.Amount),
             Currency: "IDR",
         },
         AvailableSeats:garudaIndonesia.AvailableSeats,

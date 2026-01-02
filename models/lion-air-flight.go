@@ -133,6 +133,7 @@ func (lionAir LionAirFlight) ToFlight() Flight {
 		Aircraft: lionAir.PlaneType,
 		Price: PriceInfo{
 			Amount:   lionAir.Pricing.Total,
+			FormattedAmount: utils.FormatIDR(lionAir.Pricing.Total),
 			Currency: lionAir.Pricing.Currency,
 		},
 		AvailableSeats: lionAir.SeatsLeft,

@@ -71,6 +71,7 @@ func (airAsia AirAsiaFlight) ToFlight() Flight {
 		Stops: stops,
 		Price: PriceInfo{
 			Amount:   float64(airAsia.PriceIDR),
+			FormattedAmount: utils.FormatIDR(float64(airAsia.PriceIDR)),
 			Currency: "IDR",
 		},
 		AvailableSeats: airAsia.Seats,

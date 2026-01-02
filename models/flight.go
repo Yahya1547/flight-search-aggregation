@@ -65,6 +65,7 @@ type DurationInfo struct {
 
 type PriceInfo struct {
 	Amount   float64 `json:"amount"`
+	FormattedAmount string `json:"formatted_amount"`
 	Currency string  `json:"currency"`
 }
 

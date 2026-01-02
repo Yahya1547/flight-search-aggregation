@@ -76,6 +76,7 @@ func (batikAir BatikAirFlight) ToFlight() Flight {
 		Stops: batikAir.NumberOfStops,
 		Price: PriceInfo{
 			Amount:   batikAir.Fare.TotalPrice,
+			FormattedAmount: utils.FormatIDR(batikAir.Fare.TotalPrice),
 			Currency: batikAir.Fare.CurrencyCode,
 		},
 		AvailableSeats: batikAir.SeatsAvailable,
