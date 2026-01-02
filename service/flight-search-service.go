@@ -2,7 +2,6 @@ package service
 
 import (
 	"flight-search-aggregation/models"
-	"flight-search-aggregation/provider"
 	"sort"
 )
 
@@ -45,31 +44,23 @@ func FilterByNumberOfStops(flights []models.Flight, numberOfStops []int) []model
 	return res
 }
 
-func GetAirlineProvidersFilterByAirlines(airlines []string) []provider.AirlineProvider {
-	var defaultProviders []provider.AirlineProvider
-	defaultProviders = append(defaultProviders, &provider.LionAirProvider{})
-	defaultProviders = append(defaultProviders, &provider.AirAsiaProvider{})
-	defaultProviders = append(defaultProviders, &provider.BatikAirProvider{})
-	defaultProviders = append(defaultProviders, &provider.GarudaIndonesiaProvider{})
-
+func FilterByAirlines(flights []models.Flight, airlines []string) []models.Flight {
 	if len(airlines) == 0 {
-		return defaultProviders
+		return flights
 	}
 
-	var providers []provider.AirlineProvider
+	var res []models.Flight
+	airlineMap := make(map[string]bool)
 	for _, airline := range airlines {
-		switch airline {
-		case "Lion Air":
-			providers = append(providers, &provider.LionAirProvider{})
-		case "Air Asia":
-			providers = append(providers, &provider.AirAsiaProvider{})
-		case "Batik Air":
-			providers = append(providers, &provider.BatikAirProvider{})
-		case "Garuda Indonesia":
-			providers = append(providers, &provider.GarudaIndonesiaProvider{})
+		airlineMap[airline] = true
+	}
+
+	for _, flight := range flights {
+		if airlineMap[flight.Provider] {
+			res = append(res, flight)
 		}
 	}
-	return providers
+	return res
 }
 
 func SortByPrice(flights []models.Flight, asc bool) {

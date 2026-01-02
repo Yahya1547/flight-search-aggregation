@@ -17,7 +17,7 @@ import (
 func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 	origin := request.URL.Query().Get("origin")
 	destination := request.URL.Query().Get("destination")
-	date := request.URL.Query().Get("date")
+	departureDate := request.URL.Query().Get("departure_date")
 	passengers := request.URL.Query().Get("passengers")
 	cabinClass := request.URL.Query().Get("cabin_class")
 	airlines := request.URL.Query().Get("airlines")
@@ -43,7 +43,7 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 	req := provider.SearchRequest{
 		Origin:      origin,
 		Destination: destination,
-		DepartureDate: date,
+		DepartureDate: departureDate,
 		Passengers:  passengersInt,
 		CabinClass: cabinClass,
 	}
@@ -51,13 +51,20 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
+	providersList := []provider.AirlineProvider{
+		&provider.AirAsiaProvider{},
+		&provider.BatikAirProvider{},
+		&provider.LionAirProvider{},
+		&provider.GarudaIndonesiaProvider{},
+	}
+	aggregatedFlight, _ := aggregator.Aggregate(ctx, req, providersList)
+	flights := aggregatedFlight.Flights
+
 	airlineFilterList := []string{}
 	if airlines != "" {
 		airlineFilterList = strings.Split(airlines, ",")
+		flights = service.FilterByAirlines(flights, airlineFilterList)
 	}
-	providersList := service.GetAirlineProvidersFilterByAirlines(airlineFilterList)
-	aggregatedFlight, _ := aggregator.Aggregate(ctx, req, providersList)
-	flights := aggregatedFlight.Flights
 
 	if maxPriceStr != "" && minPriceStr != "" {
 		maxPrice, _ := strconv.ParseFloat(maxPriceStr, 64)
@@ -100,7 +107,7 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 		SearchCriteria: models.FlightSearchCriteria {
 			Origin: origin,
 			Destination: destination,
-			DepartureDate: date,
+			DepartureDate: departureDate,
 			Passengers: passengersInt,
 			CabinClass: cabinClass,
 		},
