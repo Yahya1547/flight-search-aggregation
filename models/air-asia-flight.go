@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+	"strings"
+
 	"flight-search-aggregation/utils"
 )
 
@@ -15,8 +17,8 @@ type AirAsiaFlight struct {
 	Airline         string    `json:"airline"`
 	FromAirport     string    `json:"from_airport"`
 	ToAirport       string    `json:"to_airport"`
-	DepartTime      time.Time `json:"depart_time"`
-	ArriveTime      time.Time `json:"arrive_time"`
+	DepartTime      string `json:"depart_time"`
+	ArriveTime      string `json:"arrive_time"`
 	DurationHours   float64   `json:"duration_hours"`
 	DirectFlight    bool      `json:"direct_flight"`
 	Stops           []AirAsiaFlightStop `json:"stops,omitempty"`
@@ -39,6 +41,9 @@ func (airAsia AirAsiaFlight) ToFlight() Flight {
 	} else {
 		stops = len(airAsia.Stops)
 	}
+
+	departureTime, _ := time.Parse(time.RFC3339, airAsia.DepartTime)
+	arrivalTime, _ := time.Parse(time.RFC3339, airAsia.ArriveTime)
 	return Flight{
 		Id:       airAsia.FlightCode + "_AirAsia",
 		Provider: "AirAsia",
@@ -50,14 +55,14 @@ func (airAsia AirAsiaFlight) ToFlight() Flight {
 		Departure: FlightPointInfo{
 			Airport:  airAsia.FromAirport,
 			City:     "",
-			Datetime: airAsia.DepartTime,
-			Timestamp: airAsia.DepartTime.Unix(),
+			Datetime: strings.Split(airAsia.DepartTime, "T")[0],
+			Timestamp: departureTime.Unix(),
 		},
 		Arrival: FlightPointInfo{
 			Airport:  airAsia.ToAirport,
 			City:     "",
-			Datetime: airAsia.ArriveTime,
-			Timestamp: airAsia.ArriveTime.Unix(),
+			Datetime: strings.Split(airAsia.ArriveTime, "T")[0],
+			Timestamp: (arrivalTime.Unix()),
 		},
 		Duration: DurationInfo{
 			TotalMinutes: durationMinutes,

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 	"flight-search-aggregation/utils"
 )
@@ -101,8 +102,8 @@ func (lionAir LionAirFlight) ToFlight() Flight {
 
 	flightTime := lionAir.FlightTime + layoverTime
 	
-	departureTime, _ := time.Parse(time.RFC3339, lionAir.Schedule.Departure + "Z07:00")
-	arrivalTime, _ := time.Parse(time.RFC3339, lionAir.Schedule.Arrival + "Z07:00")
+	departureTime, _ := time.Parse("2006-01-02T15:04:05", lionAir.Schedule.Departure)
+	arrivalTime, _ := time.Parse("2006-01-02T15:04:05", lionAir.Schedule.Arrival)
 	
 	return Flight {
 		Id:       lionAir.Id + "_LionAir",
@@ -115,14 +116,14 @@ func (lionAir LionAirFlight) ToFlight() Flight {
 		Departure: FlightPointInfo{
 			Airport:  lionAir.Route.From.Code,
 			City:     lionAir.Route.From.City,
-			Datetime: departureTime,
-			Timestamp: departureTime.Unix(),
+			Datetime: strings.Split(lionAir.Schedule.Departure, "T")[0],
+			Timestamp: int64(departureTime.Unix()),
 		},
 		Arrival: FlightPointInfo{
 			Airport:  lionAir.Route.To.Code,
 			City:     lionAir.Route.To.City,
-			Datetime: arrivalTime,
-			Timestamp: arrivalTime.Unix(),
+			Datetime: strings.Split(lionAir.Schedule.Arrival, "T")[0],
+			Timestamp: int64(arrivalTime.Unix()),
 		},
 		Duration: DurationInfo{
 			TotalMinutes: flightTime,

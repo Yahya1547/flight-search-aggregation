@@ -6,6 +6,8 @@ import (
 
 	"flight-search-aggregation/models"
 	"flight-search-aggregation/provider"
+
+	"github.com/patrickmn/go-cache"
 )
 
 func Aggregate(
@@ -14,6 +16,13 @@ func Aggregate(
 	providersList []provider.AirlineProvider,
 ) (models.FlightAggregatedData, error) {
 
+	cacheKey := cacheKey(req.Origin, req.Destination, req.DepartureDate)
+	if cachedData, found := cacheInstance.Get(cacheKey); found {
+		aggregatedData := cachedData.(models.FlightAggregatedData)
+		aggregatedData.Metadata.CacheHit = true
+		return aggregatedData, nil
+	}
+	
 	var wg sync.WaitGroup
 	ch := make(chan []models.Flight, len(providersList))
 	errCh := make(chan error, len(providersList))
@@ -56,6 +65,8 @@ func Aggregate(
 			CacheHit:			false,
 		},
 	}
+
+	cacheInstance.Set(cacheKey, aggregatedData, cache.DefaultExpiration)
 
 	return aggregatedData, nil
 }

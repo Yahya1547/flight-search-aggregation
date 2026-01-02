@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type FlightResponse struct {
 	SearchCriteria FlightSearchCriteria `json:"search_criteria"`
 	Flights        []Flight            `json:"flights"`
@@ -51,7 +49,7 @@ type Flight struct {
 type FlightPointInfo struct {
 	Airport  string    `json:"airport"`
 	City     string    `json:"city"`
-	Datetime time.Time `json:"datetime"`
+	Datetime string `json:"datetime"`
 	Timestamp int64    `json:"timestamp"`
 }
 

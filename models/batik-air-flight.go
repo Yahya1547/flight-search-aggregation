@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 	"fmt"
+	"strings"
 
 	"flight-search-aggregation/utils"
 )
@@ -46,8 +47,8 @@ type BatikAirConnectionInfo struct {
 
 func (batikAir BatikAirFlight) ToFlight() Flight {
 	durationMinutes := utils.ParseDurationToMinutes(batikAir.TravelTime)
-	arrivalTime, _ := time.Parse(time.RFC3339, batikAir.ArrivalDateTime)
-	departureTime, _ := time.Parse(time.RFC3339, batikAir.DepartureDateTime)
+	arrivalTime, _ := time.Parse("2006-01-02T15:04:05-0700", batikAir.ArrivalDateTime)
+	departureTime, _ := time.Parse("2006-01-02T15:04:05-0700", batikAir.DepartureDateTime)
 	return Flight{
 		Id:       batikAir.FlightNumber + "_BatikAir",
 		Provider: "Batik Air",
@@ -59,14 +60,14 @@ func (batikAir BatikAirFlight) ToFlight() Flight {
 		Departure: FlightPointInfo{
 			Airport:  batikAir.Origin,
 			City:     "",
-			Datetime: departureTime,
-			Timestamp: departureTime.Unix(),
+			Datetime: strings.Split(batikAir.DepartureDateTime, "T")[0],
+			Timestamp: int64(departureTime.Unix()),
 		},
 		Arrival: FlightPointInfo{
 			Airport:  batikAir.Destination,
 			City:     "",
-			Datetime: arrivalTime,
-			Timestamp: arrivalTime.Unix(),
+			Datetime: strings.Split(batikAir.ArrivalDateTime, "T")[0],
+			Timestamp: int64(arrivalTime.Unix()),
 		},
 		Duration: DurationInfo{
 			TotalMinutes: durationMinutes,

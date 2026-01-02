@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"time"
 	"context"
 	"flight-search-aggregation/models"
 )
@@ -9,7 +8,7 @@ import (
 type SearchRequest struct {
 	Origin      string `json:"origin"`
 	Destination string `json:"destination"`
-	DepartureDate time.Time `json:"departureDate"`
+	DepartureDate string `json:"departureDate"`
 	Passengers  int `json:"passengers"`
 	CabinClass string `json:"cabinClass"`
 }

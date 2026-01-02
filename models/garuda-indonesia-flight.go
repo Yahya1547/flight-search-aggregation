@@ -4,7 +4,8 @@ import (
 	"time"
 	"fmt"
 	"strconv"
-	
+	"strings"
+
 	"flight-search-aggregation/utils"
 )
 
@@ -33,7 +34,7 @@ type GarudaIndonesiaFlight struct {
 type GarudaFlightPointInfo struct {
 	Airport  string    `json:"airport"`
 	City     string    `json:"city"`
-	Time     time.Time `json:"time"`
+	Time     string `json:"time"`
 	Terminal string    `json:"terminal"`
 }
 
@@ -61,7 +62,8 @@ type GarudaSegmentPointInfo struct {
 }
 
 func (garudaIndonesia GarudaIndonesiaFlight) ToFlight() Flight {
-
+	departureTime, _ := time.Parse(time.RFC3339, garudaIndonesia.Departure.Time)
+	arrivalTime, _ := time.Parse(time.RFC3339, garudaIndonesia.Arrival.Time)
 	return Flight {
 		Id:       garudaIndonesia.FlightId + "_GarudaIndonesia",
 		Provider: "Garuda Indonesia",
@@ -73,14 +75,14 @@ func (garudaIndonesia GarudaIndonesiaFlight) ToFlight() Flight {
 		Departure: FlightPointInfo{
 			Airport:  garudaIndonesia.Departure.Airport,
 			City:     garudaIndonesia.Departure.City,
-			Datetime: garudaIndonesia.Departure.Time,
-			Timestamp: int64(garudaIndonesia.Departure.Time.Unix()),
+			Datetime: strings.Split(garudaIndonesia.Departure.Time, "T")[0],
+			Timestamp: int64(departureTime.Unix()),
 		},
 		Arrival: FlightPointInfo{
 			Airport:  garudaIndonesia.Arrival.Airport,
 			City:     garudaIndonesia.Arrival.City,
-			Datetime: garudaIndonesia.Arrival.Time,
-			Timestamp: int64(garudaIndonesia.Arrival.Time.Unix()),
+			Datetime: strings.Split(garudaIndonesia.Arrival.Time, "T")[0],
+			Timestamp: int64(arrivalTime.Unix()),
 		},
 		Duration: DurationInfo{
 			TotalMinutes: garudaIndonesia.DurationMin,

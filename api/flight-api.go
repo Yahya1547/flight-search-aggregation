@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 	"strings"
-	"fmt"
 
 	"flight-search-aggregation/aggregator"
 	"flight-search-aggregation/provider"
@@ -38,16 +37,11 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 		}
 	}
 
-	departureDate := time.Time{}
-	if date != "" {
-		departureDate, _ = time.Parse(time.RFC3339, date)
-	}
-
 	passengersInt, _ := strconv.Atoi(passengers)
 	req := provider.SearchRequest{
 		Origin:      origin,
 		Destination: destination,
-		DepartureDate: departureDate,
+		DepartureDate: date,
 		Passengers:  passengersInt,
 		CabinClass: cabinClass,
 	}
@@ -64,7 +58,6 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 	flights := aggregatedFlight.Flights
 
 	if maxPriceStr != "" && minPriceStr != "" {
-		fmt.Println("Filtering by price:", maxPriceStr, minPriceStr)
 		maxPrice, _ := strconv.ParseFloat(maxPriceStr, 64)
 		minPrice, _ := strconv.ParseFloat(minPriceStr, 64)
 		flights = service.FilterByPrice(flights, maxPrice, minPrice)
@@ -72,7 +65,6 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 
 
 	if maxDurationStr != "" && minDurationStr != "" {
-		fmt.Println("Filtering by duration:", maxDurationStr, minDurationStr)
 		maxDuration, _ := strconv.Atoi(maxDurationStr)
 		minDuration, _ := strconv.Atoi(minDurationStr)
 		flights = service.FilterByDuration(flights, maxDuration, minDuration)
