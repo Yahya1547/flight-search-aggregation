@@ -89,3 +89,21 @@ func SortByDuration(flights []models.Flight, asc bool) {
 		return flights[i].Duration.TotalMinutes > flights[j].Duration.TotalMinutes
 	})
 }
+
+func SortByDepartureTime(flights []models.Flight, asc bool) {
+	sort.Slice(flights, func(i, j int) bool {
+		if asc {
+			return flights[i].Departure.Timestamp < flights[j].Departure.Timestamp
+		}
+		return flights[i].Departure.Timestamp > flights[j].Departure.Timestamp
+	})
+}
+
+func SortByArrivalTime(flights []models.Flight, asc bool) {
+	sort.Slice(flights, func(i, j int) bool {
+		if asc {
+			return flights[i].Arrival.Timestamp < flights[j].Arrival.Timestamp
+		}
+		return flights[i].Arrival.Timestamp > flights[j].Arrival.Timestamp
+	})
+}

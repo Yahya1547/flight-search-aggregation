@@ -90,6 +90,10 @@ func SearchFlightsHandler(response http.ResponseWriter, request *http.Request) {
 			service.SortByPrice(flights, sortDirection == "asc")
 		case "duration":
 			service.SortByDuration(flights, sortDirection == "asc")
+		case "departure":
+			service.SortByDepartureTime(flights, sortDirection == "asc")
+		case "arrival":
+			service.SortByArrivalTime(flights, sortDirection == "asc")
 	}
 
 	flightsResponse := models.FlightResponse {
