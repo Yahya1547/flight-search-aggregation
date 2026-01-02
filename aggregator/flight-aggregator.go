@@ -22,10 +22,10 @@ func Aggregate(
 		aggregatedData.Metadata.CacheHit = true
 		return aggregatedData, nil
 	}
-	
+
 	var wg sync.WaitGroup
-	ch := make(chan []models.Flight, len(providersList))
-	errCh := make(chan error, len(providersList))
+	flightChannel := make(chan []models.Flight, len(providersList))
+	errorChannel := make(chan error, len(providersList))
 
 	for _, p := range providersList {
 		wg.Add(1)
@@ -33,24 +33,30 @@ func Aggregate(
 			defer wg.Done()
 			flights, err := provider.GetFlights(ctx, req)
 			if err != nil {
-                errCh <- err
+                errorChannel <- err
                 return
             }
-			ch <- flights
+			var validFlights []models.Flight
+			for _, flight := range flights {
+				if IsFlightValid(flight) {
+					validFlights = append(validFlights, flight)
+				}
+			}
+			flightChannel <- validFlights
 		}(p)
 	}
 
 	wg.Wait()
-	close(ch)
-	close(errCh)
+	close(flightChannel)
+	close(errorChannel)
 
 	var results []models.Flight
-	for f := range ch {
-		results = append(results, f...)
+	for flightsByProvider := range flightChannel {
+		results = append(results, flightsByProvider...)
 	}
 
 	failedProviders := 0
-	for _ = range errCh {
+	for _ = range errorChannel {
 		failedProviders++
 	}
 
@@ -69,4 +75,28 @@ func Aggregate(
 	cacheInstance.Set(cacheKey, aggregatedData, cache.DefaultExpiration)
 
 	return aggregatedData, nil
+}
+
+func IsFlightValid(flight models.Flight) bool {
+	if (flight.AvailableSeats <= 0) {
+		return false
+	}
+
+	if (flight.Price.Amount <= 0) {
+		return false
+	}
+
+	if (flight.Duration.TotalMinutes <= 0) {
+		return false
+	}
+
+	if (flight.Departure.Timestamp <= 0 || flight.Arrival.Timestamp <= 0) {
+		return false
+	}
+
+	if (flight.Arrival.Timestamp <= flight.Departure.Timestamp) {
+		return false
+	}
+
+	return true
 }
